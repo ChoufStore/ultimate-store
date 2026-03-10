@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ultimate-store - Moroccan Artisan Market</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:white;}
+        .navbar{background:rgba(255,255,255,0.1);padding:1rem 2rem;display:flex;justify-content:space-between;}
+        .hero{text-align:center;padding:4rem 2rem;}
+        .hero h1{font-size:3.5rem;margin-bottom:1rem;}
+        .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;max-width:1200px;margin:3rem auto;padding:0 2rem;}
+        .product-card{background:white;border-radius:20px;padding:2rem;color:#333;box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+        .product-icon{font-size:4rem;text-align:center;}
+        .product-name{font-size:1.5rem;font-weight:bold;text-align:center;margin:1rem 0;}
+        .product-price{font-size:2rem;color:#667eea;font-weight:bold;text-align:center;}
+        .btn{background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;padding:1rem 2rem;border-radius:50px;width:100%;cursor:pointer;}
+        .footer{text-align:center;padding:2rem;}
+    </style>
+</head>
+<body>
+    <nav class="navbar"><div class="logo">🛍️ ultimate-store</div></nav>
+    <div class="hero"><h1>🇲🇦 Welcome to ultimate-store</h1><p>Authentic Moroccan craftsmanship</p></div>
+    <div class="products-grid" id="products-grid"></div>
+    <div class="footer"><p>© 2026 ultimate-store - Made in Morocco</p></div>
+    <script>
+        fetch('https://firestore.googleapis.com/v1/projects/choufstore-1a66b/databases/(default)/documents/stores/ultimate-store/products')
+            .then(r => r.json())
+            .then(data => {
+                const grid = document.getElementById('products-grid');
+                if(data.documents?.length > 0) {
+                    let html = '';
+                    data.documents.forEach(doc => {
+                        const f = doc.fields;
+                        html += `
+                            <div class="product-card">
+                                <div class="product-icon">${f.icon?.stringValue || '📦'}</div>
+                                <div class="product-name">${f.name.stringValue}</div>
+                                <div class="product-price">${f.price.integerValue} MAD</div>
+                                <button class="btn">Add to Cart</button>
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                } else {
+                    grid.innerHTML = '<p style="text-align:center">✨ No products yet</p>';
+                }
+            });
+    </script>
+</body>
+</html>
